@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace test
+namespace EntityFrameworkBasics
 {
     public class Program
     {
@@ -19,9 +19,7 @@ namespace test
 
         public static IWebHost BuildWebHost(string[] args)
         {
-            return new WebHostBuilder()
-                .UseKestrel()
-                .UseContentRoot(Directory.GetCurrentDirectory())
+            return WebHost.CreateDefaultBuilder()
                 .UseStartup<Startup>()
                 .Build();
         }
