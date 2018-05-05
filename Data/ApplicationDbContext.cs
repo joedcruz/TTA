@@ -1,12 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 
-namespace EntityFrameworkBasics
+namespace TTAServer
 {
     /// <summary>
     /// The database representational model for our application 
     /// </summary>
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public string Id { get; set; } = Guid.NewGuid().ToString("N");
         
