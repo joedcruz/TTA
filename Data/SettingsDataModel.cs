@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace EntityFrameworkBasics
+namespace TTAServer
 {
     /// <summary>
     /// Our settings database table representational model

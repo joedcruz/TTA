@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace EntityFrameworkBasics
+namespace TTAServer
 {
     /// <summary>
     /// A shorthand access class to get DI services with nice clean short code
