@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 
 namespace TTAServer
 {
@@ -12,7 +14,7 @@ namespace TTAServer
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            IocContainer.Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -22,7 +24,7 @@ namespace TTAServer
         {
             // Add ApplicationDbContext to DI
             services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(IocContainer.Configuration.GetConnectionString("DefaultConnection")));
 
             // AddIdentity adds cookie based authentication
             // Adds scoped classes for things like UserManager, SignInManager, PasswordHashers etc...
@@ -37,6 +39,22 @@ namespace TTAServer
                 // Adds a provider that generates unique keys and hashes for things like
                 // forgot password links, phone number verification codes etc...
                 .AddDefaultTokenProviders();
+
+            // Add JWT Authentication for Api clients
+            services.AddAuthentication().
+                AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = IocContainer.Configuration["Jwt:Issuer"],
+                        ValidAudience = IocContainer.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(IocContainer.Configuration["Jwt:SecretKey"])),
+                    };
+                });
 
             // Change password policy
             services.Configure<IdentityOptions>(options =>
