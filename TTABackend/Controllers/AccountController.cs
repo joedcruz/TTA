@@ -11,15 +11,12 @@ namespace TTABackend.Controllers
     [Route("api/[controller]")]
     public class AccountController : Controller
     {
-        private readonly UserManager<IdentityUser> _userManager;
-        private readonly SignInManager<IdentityUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public AccountController(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            UserManager<ApplicationUser> userManager)
         {
             _userManager = userManager;
-            _signInManager = signInManager;
         }
 
         [HttpPost]
@@ -27,7 +24,7 @@ namespace TTABackend.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new IdentityUser { UserName = Credentials.Email, Email = Credentials.Email };
+                var user = new ApplicationUser { UserName = Credentials.Email, Email = Credentials.Email };
                 var result = await _userManager.CreateAsync(user, Credentials.Password);
 
                 if (result.Succeeded)

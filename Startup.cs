@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -41,8 +42,8 @@ namespace TTAServer
                 .AddDefaultTokenProviders();
 
             // Add JWT Authentication for Api clients
-            services.AddAuthentication().
-                AddJwtBearer(options =>
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -76,7 +77,7 @@ namespace TTAServer
                 // Change cookie timeout to expire in 15 seconds
                 options.ExpireTimeSpan = TimeSpan.FromSeconds(15);
             });
-
+            
             services.AddMvc();
         }
 

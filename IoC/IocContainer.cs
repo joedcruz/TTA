@@ -13,6 +13,7 @@ namespace TTAServer
         /// </summary>
         public static ApplicationDbContext ApplicationDbContext => IocContainer.Provider.GetService<ApplicationDbContext>();
     }
+
     /// <summary>
     /// The dependency injection container making use of the built in .Net Core service provider
     /// </summary>

@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace TTAServer.Controllers
 {
@@ -81,66 +78,48 @@ namespace TTAServer.Controllers
             return View();
         }
 
-        /// <summary>
-        /// Create our single user for now
-        /// </summary>
-        /// <returns></returns>
-        [Route("create")]
-        public async Task<IActionResult> CreateUserAsync()
-        {
-            var result = await mUserManager.CreateAsync(new ApplicationUser
-            {
-                UserName = "joedcruz",
-                Email = "joedcruz99@gmail.com"
-            }, "password");
-
-            if (result.Succeeded)
-                return Content("User was created", "text/html");
-
-            return Content("User creation failed", "text/html");
-        }
-
         // Private area
-        [Authorize]
-        [Route("private")]
-        public IActionResult Private()
+        [Authorize(AuthenticationSchemes = "Bearer")]
+        [HttpGet]
+        [Route("api/mysecuredmethod")]
+        public IActionResult MySecuredMethod()
         {
-            return Content($"This is a private area. Welcome {HttpContext.User.Identity.Name}", "text/html");
+            return Content($"This is a secured method accessed by user {HttpContext.User.Identity.Name}", "text/html");
         }
 
-        [Route("logout")]
-        public async Task<IActionResult> SignOutAsync()
-        {
-            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-            return Content("User logged out");
-        }
+        //[Route("logout")]
+        //public async Task<IActionResult> SignOutAsync()
+        //{
+        //    await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+        //    return Content("User logged out");
+        //}
 
         /// <summary>
         /// An auto-login page for testing
         /// </summary>
         /// <param name="returnUrl">The url to return to if successfully logged in</param>
         /// <returns></returns>
-        [Route("login")]
-        public async Task<IActionResult> LoginAsync(string returnUrl)
-        {
-            // Sign out any previous sessions
-            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-            
-            // Sign user in with valid credentials
-            var result = await mSignInManager.PasswordSignInAsync("joedcruz", "password", true, false);
+        //[Route("login")]
+        //public async Task<IActionResult> LoginAsync(string returnUrl)
+        //{
+        //    // Sign out any previous sessions
+        //    await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
 
-            if (result.Succeeded)
-            {
-                // If we have no return URL...
-                if (string.IsNullOrEmpty(returnUrl))
-                    // Go to home
-                    return RedirectToAction(nameof(Index));
+        //    // Sign user in with valid credentials
+        //    var result = await mSignInManager.PasswordSignInAsync("joedcruz", "password", true, false);
 
-                // Otherwise, go to the return url
-                return Redirect(returnUrl);
-            }
+        //    if (result.Succeeded)
+        //    {
+        //        // If we have no return URL...
+        //        if (string.IsNullOrEmpty(returnUrl))
+        //            // Go to home
+        //            return RedirectToAction(nameof(Index));
 
-            return Content("Failed to login", "text/html");
-        }
+        //        // Otherwise, go to the return url
+        //        return Redirect(returnUrl);
+        //    }
+
+        //    return Content("Failed to login", "text/html");
+        //}
     }
 }

@@ -61,13 +61,16 @@ namespace TTABackend
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IServiceProvider serviceProvider)
         {
+            // Store instance of the DI service provider so our application can access it anywhere
+            IocContainer.Provider = (ServiceProvider)serviceProvider;
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            
             app.UseAuthentication();
 
             app.UseMvc();
