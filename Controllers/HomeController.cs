@@ -79,7 +79,7 @@ namespace TTAServer.Controllers
         }
 
         // Private area
-        [Authorize(AuthenticationSchemes = "Bearer")]
+        [Authorize(AuthenticationSchemes = "Bearer", Policy = "AccessSecuredMethod")]
         [HttpGet]
         [Route("api/mysecuredmethod")]
         public IActionResult MySecuredMethod()

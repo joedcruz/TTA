@@ -77,6 +77,11 @@ namespace TTAServer
                 // Change cookie timeout to expire in 15 seconds
                 options.ExpireTimeSpan = TimeSpan.FromSeconds(15);
             });
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AccessSecuredMethod", policy => policy.RequireRole("Admin", "Manager"));
+            });
             
             services.AddMvc();
         }
@@ -89,7 +94,7 @@ namespace TTAServer
 
             // Setup Identity
             app.UseAuthentication();
-
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

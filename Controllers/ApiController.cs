@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 using TTAServer.Models;
 using TTAServer.Authentication;
 using System.Linq;
+using TTAServer.Providers;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System;
 
 namespace TTAServer.Controllers
 {
@@ -101,10 +107,57 @@ namespace TTAServer.Controllers
 
             // If we get here, we are valid and the user passed the correct login details
 
-            // Generate and return the token to user
-            var token = user.GenerateJwtToken();
+            // retrieving roles for user
+            var userRoles = await mUserManager.GetRolesAsync(user);
+            foreach (var userRole in userRoles)
+            {
+                var x = userRole;
+            }
 
-            return Content(token, "text/html");                      
+
+            // Set our tokens claims
+            var claims = new[]
+            {
+                // Unique ID for this token
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
+                // The username using the Identity name so it fills out the HttpContext.User.Identity.Name value
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName)
+            };
+
+            //ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token");
+            //var roles = userManager.GetRolesAsync(user);
+            //var userRoles = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToArray();
+            //var roleClaims = await GetRoleClaimsAsync(roles).ConfigureAwait(false);
+
+            //var rolesNotExists = rolesToAssign.NewRoles.Except(userManager.GetRolesAsync(user).Select(x => x.Name)).ToArray();
+
+            //foreach (var newRole in userRoles)
+            //{
+            //    claimsIdentity.AddClaim(new Claim(newRole., "b"));
+            //}
+
+            // Create the credentials used to generate the token
+            var credentials = new SigningCredentials(
+                // Get the secret key from configuration
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(IocContainer.Configuration["Jwt:SecretKey"])),
+                // Use HS256 algorithm
+                SecurityAlgorithms.HmacSha256);
+
+            // Generate the Jwt Token
+            var token = new JwtSecurityToken(
+                issuer: IocContainer.Configuration["Jwt:Issuer"],
+                audience: IocContainer.Configuration["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddMonths(3),
+                signingCredentials: credentials
+                );
+
+            // Generate and return the token to user
+            // token = user.GenerateJwtToken();
+
+            return JwtSecurityTokenHandler().WriteToken(token);
+            
+            //return Content(token, "text/html");                      
         }
 
         [Route("api/assignrolestouser")]
@@ -151,6 +204,38 @@ namespace TTAServer.Controllers
 
             return Ok();
         }
+
+        //[Route("api/assignclaims")]
+        //[HttpPut]
+        //public async Task<IActionResult> AssignClaimsToUser([FromBody] ClaimsToAssign claimsToAssign)
+        //{
+
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
+
+        //    var user = await mUserManager.FindByNameAsync(claimsToAssign.Username);
+            
+        //    if (user == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    foreach (ClaimsToAssign.ClaimBindingModel claimModel in claimsToAssign.NewClaims)
+        //    {
+        //        if (user.Claims.Any(c => c.ClaimType == claimModel.Type))
+        //        {
+
+        //            await mUserManager.RemoveClaimAsync(user, ExtendedClaimsProvider.CreateClaim(claimModel.Type, claimModel.Value));
+        //        }
+
+        //        await mUserManager.AddClaimAsync(user, ExtendedClaimsProvider.CreateClaim(claimModel.Type, claimModel.Value));
+        //    }
+
+        //    return Ok();
+        //}
+
 
         //[AuthorizeToken]
         //[Route("api/private")]
