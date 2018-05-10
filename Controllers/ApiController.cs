@@ -12,6 +12,7 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System;
+using System.Collections.Generic;
 
 namespace TTAServer.Controllers
 {
@@ -107,35 +108,29 @@ namespace TTAServer.Controllers
 
             // If we get here, we are valid and the user passed the correct login details
 
-            // retrieving roles for user
-            var userRoles = await mUserManager.GetRolesAsync(user);
-            foreach (var userRole in userRoles)
-            {
-                var x = userRole;
-            }
-
-
             // Set our tokens claims
-            var claims = new[]
+            var claims = new List<Claim>
             {
                 // Unique ID for this token
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
                 // The username using the Identity name so it fills out the HttpContext.User.Identity.Name value
-                new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName)
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName)              
             };
 
-            //ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token");
-            //var roles = userManager.GetRolesAsync(user);
-            //var userRoles = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToArray();
-            //var roleClaims = await GetRoleClaimsAsync(roles).ConfigureAwait(false);
+            // Add other user claims
+            //var userClaims = await mUserManager.GetClaimsAsync(user);
+            //claims.AddRange(userClaims);
 
-            //var rolesNotExists = rolesToAssign.NewRoles.Except(userManager.GetRolesAsync(user).Select(x => x.Name)).ToArray();
-
-            //foreach (var newRole in userRoles)
-            //{
-            //    claimsIdentity.AddClaim(new Claim(newRole., "b"));
-            //}
-
+            // Get all the roles assigned to the user
+            var userRoles = await mUserManager.GetRolesAsync(user);            
+            
+            // Add each role to the claim
+            foreach (var userRole in userRoles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, userRole));
+                var role = await mRoleManager.FindByNameAsync(userRole);
+            }
+            
             // Create the credentials used to generate the token
             var credentials = new SigningCredentials(
                 // Get the secret key from configuration
@@ -152,12 +147,13 @@ namespace TTAServer.Controllers
                 signingCredentials: credentials
                 );
 
-            // Generate and return the token to user
-            // token = user.GenerateJwtToken();
+            return Ok(new
+            {
+                token = new JwtSecurityTokenHandler().WriteToken(token)
+            });
 
-            return JwtSecurityTokenHandler().WriteToken(token);
-            
-            //return Content(token, "text/html");                      
+            // Use this if the extension class and methods are used
+            //token = user.GenerateJwtToken();
         }
 
         [Route("api/assignrolestouser")]

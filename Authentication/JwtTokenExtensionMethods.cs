@@ -18,10 +18,6 @@ namespace TTAServer.Authentication
     {        
         public static string GenerateJwtToken(this ApplicationUser user)
         {
-            //var mUserManager = new UserManager<ApplicationUser>(UserStore<ApplicationUser> store);
-
-            //protected UserManager<ApplicationUser> mUserManager;
-
             // Set our tokens claims
             var claims = new[]
             {
@@ -30,18 +26,6 @@ namespace TTAServer.Authentication
                 // The username using the Identity name so it fills out the HttpContext.User.Identity.Name value
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName)
             };
-
-            //ClaimsIdentity claimsIdentity = new ClaimsIdentity(claims, "Token");
-            //var roles = userManager.GetRolesAsync(user);
-            //var userRoles = roles.Select(r => new Claim(ClaimTypes.Role, r)).ToArray();
-            //var roleClaims = await GetRoleClaimsAsync(roles).ConfigureAwait(false);
-
-            //var rolesNotExists = rolesToAssign.NewRoles.Except(userManager.GetRolesAsync(user).Select(x => x.Name)).ToArray();
-
-            //foreach (var newRole in userRoles)
-            //{
-            //    claimsIdentity.AddClaim(new Claim(newRole., "b"));
-            //}
 
             // Create the credentials used to generate the token
             var credentials = new SigningCredentials(
