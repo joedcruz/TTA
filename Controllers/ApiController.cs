@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using TTAServer.Models;
-using TTAServer.Authentication;
 using System.Linq;
-using TTAServer.Providers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
@@ -16,13 +12,6 @@ using System.Collections.Generic;
 
 namespace TTAServer.Controllers
 {
-    //public class AuthorizeTokenAttribute : AuthorizeAttribute
-    //{
-    //    public AuthorizeTokenAttribute()
-    //    {
-    //        AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme;
-    //    }
-    //}
     /// <summary>
     /// Manages the Web API calls
     /// </summary>    
@@ -66,8 +55,9 @@ namespace TTAServer.Controllers
         #endregion
 
         /// <summary>
-        /// Create user
+        /// Creates a user
         /// </summary>
+        /// <param name="registrationInfo">Username and Password for registration as json object. Username is mobile no</param>
         /// <returns></returns>
         [Route("api/register")]
         [HttpPost]
@@ -79,10 +69,15 @@ namespace TTAServer.Controllers
 
             if (result.Succeeded)
                 return Content("User created successfully", "text/html");
-
-            return Content("User creation failed", "text/html");
+            else
+                return Content("User creation failed", "text/html");
         }
 
+        /// <summary>
+        /// Allows user to login using the login credentials. Successful login return the user token
+        /// </summary>
+        /// <param name="loginCredentials">Credentials are Username and Password</param>
+        /// <returns></returns>
         [Route("api/login")]
         public async Task<IActionResult> LogInAsync([FromBody]LoginCredentials loginCredentials)
         {
@@ -152,29 +147,40 @@ namespace TTAServer.Controllers
                 token = new JwtSecurityTokenHandler().WriteToken(token)
             });
 
-            // Use this if the extension class and methods are used
+            // Use this if the extension class is used
             //token = user.GenerateJwtToken();
         }
 
+        /// <summary>
+        /// Assign claims to user. If the role does not exist, it will create the role and then assign.
+        /// </summary>
+        /// <param name="rolesToAssign">Username and string array of roles to assign</param>
+        /// <returns></returns>
         [Route("api/assignrolestouser")]
         [HttpPut]
         public async Task<IActionResult> AssignRolesToUser([FromBody]AssignUserRoles rolesToAssign)
         {
+            // Find the user using the Username
             var user = await mUserManager.FindByNameAsync(rolesToAssign.Username);
 
+            // If user not found, exit
             if (user == null)
             {
                 return NotFound();
             }
 
+            // If user is found in the database, get all the roles assigned to that user
             var currentRoles = await mUserManager.GetRolesAsync(user);
 
+            // Check if the existing roles assigned are different from the new roles to be aassigned
             var rolesNotExists = rolesToAssign.NewRoles.Except(mRoleManager.Roles.Select(x => x.Name)).ToArray();
 
+            // If the new roles to be assigned are different from the existing roles assigned
             if (rolesNotExists.Count() > 0)
             {
                 foreach (string newRole in rolesToAssign.NewRoles)
                 {
+                    // Check if the new role already exist in the database. If not create the new role
                     if (!await mRoleManager.RoleExistsAsync(newRole))
                     {
                         await mRoleManager.CreateAsync(new IdentityRole(newRole));
@@ -182,16 +188,20 @@ namespace TTAServer.Controllers
                 }
             }
 
+            // Remove all the current roles before assigning the new roles
             IdentityResult removeResult = await mUserManager.RemoveFromRolesAsync(user, currentRoles.ToArray());
 
+            // If removing roles did not succeed, exit
             if (!removeResult.Succeeded)
             {
                 ModelState.AddModelError("", "Failed to remove user roles");
                 return BadRequest(ModelState);
             }
 
+            // If removing current roles succeeded, then assign all the new roles to the user
             IdentityResult addResult = await mUserManager.AddToRolesAsync(user, rolesToAssign.NewRoles);
 
+            // If unable to assign the role to the user, exit
             if (!addResult.Succeeded)
             {
                 ModelState.AddModelError("", "Failed to add user roles");
@@ -232,13 +242,5 @@ namespace TTAServer.Controllers
         //    return Ok();
         //}
 
-
-        //[AuthorizeToken]
-        //[Route("api/private")]
-        //public IActionResult Private()
-        //{
-        //    var user = HttpContext.User;
-        //    return Ok(new { privateData = $"some secret for {user.Identity.Name}" });
-        //}
     }
 }

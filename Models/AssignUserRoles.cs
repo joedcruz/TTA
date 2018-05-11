@@ -1,14 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace TTAServer.Models
+﻿namespace TTAServer.Models
 {
+    /// <summary>
+    /// Used by API AssignUserRoles
+    /// </summary>
     public class AssignUserRoles
     {
+        // Username of the user to authenticate
         public string Username { get; set; }
 
+        // List of roles to be assigned to the user
         public string[] NewRoles { get; set; }
     }
 }

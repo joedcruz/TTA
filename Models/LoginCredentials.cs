@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TTAServer.Models
 {
+    /// <summary>
+    /// used by API Login
+    /// </summary>
     public class LoginCredentials
     {
+        // Mobile No as Username
         [Required]
         [Display(Name = "Mobile No.")]
         public string MobileNo { get; set; }

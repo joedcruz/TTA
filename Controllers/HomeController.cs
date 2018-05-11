@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
@@ -60,10 +59,10 @@ namespace TTAServer.Controllers
                     Value = "Black"
                 });
 
-                var settingsLocally = mContext.Settings.Local.Count();
-                var settingsDatabase = mContext.Settings.Count();
+                var settingsLocally = mContext.Settings.Local.Count(); // Retrive records from persistent memory
+                var settingsDatabase = mContext.Settings.Count(); // Retrieve records from the database
 
-                var firstLocal = mContext.Settings.Local.FirstOrDefault();
+                var firstLocal = mContext.Settings.Local.FirstOrDefault(); // Move to the first record in the table
                 var firstDatabase = mContext.Settings.FirstOrDefault(); // Will be null since the record is not stored to the database
 
                 mContext.SaveChanges(); // Commit changes to the database
@@ -79,13 +78,13 @@ namespace TTAServer.Controllers
         }
 
         // Private area
-        [Authorize(AuthenticationSchemes = "Bearer", Policy = "AccessSecuredMethod")]
-        [HttpGet]
-        [Route("api/mysecuredmethod")]
-        public IActionResult MySecuredMethod()
-        {
-            return Content($"This is a secured method accessed by user {HttpContext.User.Identity.Name}", "text/html");
-        }
+        //[Authorize(AuthenticationSchemes = "Bearer", Policy = "AccessSecuredMethod")]
+        //[HttpGet]
+        //[Route("api/mysecuredmethod")]
+        //public IActionResult MySecuredMethod()
+        //{
+        //    return Content($"This is a secured method accessed by user {HttpContext.User.Identity.Name}", "text/html");
+        //}
 
         //[Route("logout")]
         //public async Task<IActionResult> SignOutAsync()

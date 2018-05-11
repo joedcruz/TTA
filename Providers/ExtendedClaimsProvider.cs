@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace TTAServer.Providers
 {
+    /// <summary>
+    /// Class to create and retrive user claims. Not working currently.
+    /// </summary>
     public static class ExtendedClaimsProvider
     {
         public static IEnumerable<Claim> GetClaims(ApplicationUser user)

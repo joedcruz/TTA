@@ -80,7 +80,10 @@ namespace TTAServer
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("AccessSecuredMethod", policy => policy.RequireRole("Admin", "Manager"));
+                string[] r1 = new string[] { "Client", "Backoffice" };
+                string[] r2 = new string[] { "Admin", "Driver" };
+                options.AddPolicy("P_TestController1", policy => policy.RequireRole(r1));
+                options.AddPolicy("P_TestController2", policy => policy.RequireRole(r2));
             });
             
             services.AddMvc();

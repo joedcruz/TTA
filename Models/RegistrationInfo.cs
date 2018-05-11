@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TTAServer.Models
 {
+    // Used by API Register for new user registration
     public class RegistrationInfo
     {
+        // Mobile No as Username
         [Required]
         [Display(Name = "Mobile No.")]
         public string MobileNo { get; set; }

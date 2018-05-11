@@ -1,15 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace TTAServer.Models
 {
+    /// <summary>
+    /// Used by API ClaimsToAssign. Not working currently
+    /// </summary>
     public class ClaimsToAssign
     {
+        // Username to authenticate
         public string Username { get; set; }
 
+        // ClaimBindingModel object with the list of new claims to be assigned to the user
         public ClaimBindingModel[] NewClaims { get; set; }
 
         public class ClaimBindingModel
