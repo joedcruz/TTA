@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -43,6 +44,7 @@ namespace TTAServer
 
             // Add JWT Authentication for Api clients
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -55,6 +57,11 @@ namespace TTAServer
                         ValidAudience = IocContainer.Configuration["Jwt:Audience"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(IocContainer.Configuration["Jwt:SecretKey"])),
                     };
+                })
+                .AddCookie(options =>
+                {
+                    options.AccessDeniedPath = "/Home/ErrorForbidden";
+                    options.LoginPath = "/Home/ErrorNotLoggedIn";
                 });
 
             // Change password policy
@@ -72,7 +79,7 @@ namespace TTAServer
             services.ConfigureApplicationCookie(options =>
             {
                 // Redirect to /login
-                options.LoginPath = "/login";
+                options.LoginPath = "/Home/ErrorNotLoggedIn";
 
                 // Change cookie timeout to expire in 15 seconds
                 options.ExpireTimeSpan = TimeSpan.FromSeconds(15);
@@ -94,10 +101,7 @@ namespace TTAServer
         {
             // Store instance of the DI service provider so our application can access it anywhere
             IocContainer.Provider = (ServiceProvider)serviceProvider;
-
-            // Setup Identity
-            app.UseAuthentication();
-            
+                        
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -108,6 +112,9 @@ namespace TTAServer
             }
 
             app.UseStaticFiles();
+            
+            // Setup Identity
+            app.UseAuthentication();
 
             app.UseMvc(routes =>
             {

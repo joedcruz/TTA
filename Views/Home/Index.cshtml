@@ -1,1 +1,46 @@
-﻿<h1>Hello World</h1>
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@using TTAServer
+@model TTAServer.Models.LoginCredentials
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+@inject IAuthorizationService AuthorizationService
+
+<h2>Home Page</h2>
+
+@if (SignInManager.IsSignedIn(User))
+{
+    @if ((await AuthorizationService.AuthorizeAsync(User, "P_TestController1")).Succeeded)
+    {
+        <div>
+            <p>Hello, @User.Identity.Name</p>
+
+            <p>
+                <a asp-action="Manage">Manage your account</a>
+            </p>
+
+            <form method="post" asp-action="Logout">
+                <button type="submit">Logout</button>
+            </form>
+        </div>
+        }
+    }
+    else
+    {
+    <div>
+        <p>Enter your name to log in:</p>
+
+        <form method="post" asp-action="Login">
+            <div>
+                <label asp-for="MobileNo">Mobile No.</label>
+                <input asp-for="MobileNo" class="form-control" />
+            </div>
+            <div>
+                <label asp-for="Password">Password</label>
+                <input asp-for="Password" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-default">Login</button>
+        </form>
+    </div>
+}
+

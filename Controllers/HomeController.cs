@@ -1,6 +1,18 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using TTAServer.Models;
 
 namespace TTAServer.Controllers
 {
@@ -26,6 +38,8 @@ namespace TTAServer.Controllers
         /// </summary>
         protected SignInManager<ApplicationUser> mSignInManager;
 
+        protected RoleManager<IdentityRole> mRoleManager;
+
         #endregion
 
         #region Constructor
@@ -37,11 +51,13 @@ namespace TTAServer.Controllers
         public HomeController(
             ApplicationDbContext context,
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
             mContext = context;
             mUserManager = userManager;
             mSignInManager = signInManager;
+            mRoleManager = roleManager;
         }
 
         #endregion
@@ -49,76 +65,71 @@ namespace TTAServer.Controllers
         public IActionResult Index()
         {
             // Make sure we have the database
-            mContext.Database.EnsureCreated();
+            //mContext.Database.EnsureCreated();
 
-            if (!mContext.Settings.Any())
-            {
-                mContext.Settings.Add(new SettingsDataModel
-                {
-                    Name = "BackgroundColor",
-                    Value = "Black"
-                });
+            //if (!mContext.Settings.Any())
+            //{
+            //    mContext.Settings.Add(new SettingsDataModel
+            //    {
+            //        Name = "BackgroundColor",
+            //        Value = "Black"
+            //    });
 
-                var settingsLocally = mContext.Settings.Local.Count(); // Retrive records from persistent memory
-                var settingsDatabase = mContext.Settings.Count(); // Retrieve records from the database
+            //    var settingsLocally = mContext.Settings.Local.Count(); // Retrive records from persistent memory
+            //    var settingsDatabase = mContext.Settings.Count(); // Retrieve records from the database
 
-                var firstLocal = mContext.Settings.Local.FirstOrDefault(); // Move to the first record in the table
-                var firstDatabase = mContext.Settings.FirstOrDefault(); // Will be null since the record is not stored to the database
+            //    var firstLocal = mContext.Settings.Local.FirstOrDefault(); // Move to the first record in the table
+            //    var firstDatabase = mContext.Settings.FirstOrDefault(); // Will be null since the record is not stored to the database
 
-                mContext.SaveChanges(); // Commit changes to the database
+            //    mContext.SaveChanges(); // Commit changes to the database
 
-                settingsLocally = mContext.Settings.Local.Count();
-                settingsDatabase = mContext.Settings.Count();
+            //    settingsLocally = mContext.Settings.Local.Count();
+            //    settingsDatabase = mContext.Settings.Count();
 
-                firstLocal = mContext.Settings.Local.FirstOrDefault();
-                firstDatabase = mContext.Settings.FirstOrDefault();
-            }
+            //    firstLocal = mContext.Settings.Local.FirstOrDefault();
+            //    firstDatabase = mContext.Settings.FirstOrDefault();
+            //}
 
             return View();
         }
-
-        // Private area
-        //[Authorize(AuthenticationSchemes = "Bearer", Policy = "AccessSecuredMethod")]
-        //[HttpGet]
-        //[Route("api/mysecuredmethod")]
-        //public IActionResult MySecuredMethod()
-        //{
-        //    return Content($"This is a secured method accessed by user {HttpContext.User.Identity.Name}", "text/html");
-        //}
-
-        //[Route("logout")]
-        //public async Task<IActionResult> SignOutAsync()
-        //{
-        //    await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
-        //    return Content("User logged out");
-        //}
 
         /// <summary>
         /// An auto-login page for testing
         /// </summary>
         /// <param name="returnUrl">The url to return to if successfully logged in</param>
         /// <returns></returns>
-        //[Route("login")]
-        //public async Task<IActionResult> LoginAsync(string returnUrl)
-        //{
-        //    // Sign out any previous sessions
-        //    await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+        [Route("login")]
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginCredentials loginCredentials)
+        {
+            if (ModelState.IsValid)
+            {
+                var result = await mSignInManager.PasswordSignInAsync(loginCredentials.MobileNo, loginCredentials.Password, false, false);
+                
+                if (result.Succeeded)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+            }
 
-        //    // Sign user in with valid credentials
-        //    var result = await mSignInManager.PasswordSignInAsync("joedcruz", "password", true, false);
+            return View(loginCredentials);
+        }
 
-        //    if (result.Succeeded)
-        //    {
-        //        // If we have no return URL...
-        //        if (string.IsNullOrEmpty(returnUrl))
-        //            // Go to home
-        //            return RedirectToAction(nameof(Index));
+        public IActionResult Manage()
+        {
+            return View();
+        }
 
-        //        // Otherwise, go to the return url
-        //        return Redirect(returnUrl);
-        //    }
+        public IActionResult ErrorForbidden() => View();
 
-        //    return Content("Failed to login", "text/html");
-        //}
+        public IActionResult ErrorNotLoggedIn() => View();
+
+        [Route("logout")]
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await mSignInManager.SignOutAsync();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
