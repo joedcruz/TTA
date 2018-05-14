@@ -2,6 +2,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -92,7 +93,13 @@ namespace TTAServer
                 options.AddPolicy("P_TestController1", policy => policy.RequireRole(r1));
                 options.AddPolicy("P_TestController2", policy => policy.RequireRole(r2));
             });
-            
+
+            //services.AddAuthorization();
+
+            //Register the Role Authorization handler
+            //services.AddSingleton<IAuthorizationPolicyProvider, AuthorizationPolicyProvider>();
+            //services.AddSingleton<IAuthorizationHandler, HasRoleHandler>();
+
             services.AddMvc();
         }
 
