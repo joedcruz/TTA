@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-using TTAServer.Models;
 using System.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -10,7 +9,7 @@ using System.Text;
 using System;
 using System.Collections.Generic;
 
-namespace TTAServer.Controllers
+namespace TTAServer
 {
     /// <summary>
     /// Manages the Web API calls
@@ -211,6 +210,13 @@ namespace TTAServer.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Api to assign new claims to the user
+        /// Currently not used in this project
+        /// The error is because the User object user here is not the extended Application user. 
+        /// </summary>
+        /// <param name="claimsToAssign"></param>
+        /// <returns></returns>
         //[Route("api/assignclaims")]
         //[HttpPut]
         //public async Task<IActionResult> AssignClaimsToUser([FromBody] ClaimsToAssign claimsToAssign)
@@ -222,7 +228,7 @@ namespace TTAServer.Controllers
         //    }
 
         //    var user = await mUserManager.FindByNameAsync(claimsToAssign.Username);
-            
+
         //    if (user == null)
         //    {
         //        return NotFound();
@@ -232,7 +238,6 @@ namespace TTAServer.Controllers
         //    {
         //        if (user.Claims.Any(c => c.ClaimType == claimModel.Type))
         //        {
-
         //            await mUserManager.RemoveClaimAsync(user, ExtendedClaimsProvider.CreateClaim(claimModel.Type, claimModel.Value));
         //        }
 

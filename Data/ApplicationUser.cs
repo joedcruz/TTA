@@ -7,5 +7,6 @@ namespace TTAServer
     /// </summary>
     public class ApplicationUser : IdentityUser
     {
+        
     }
 }

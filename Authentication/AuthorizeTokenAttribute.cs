@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 
-namespace TTAServer.Authentication
+namespace TTAServer
 {
     public class AuthorizeTokenAttribute : AuthorizeAttribute
     {

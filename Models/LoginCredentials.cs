@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TTAServer.Models
+namespace TTAServer
 {
     /// <summary>
     /// used by API Login

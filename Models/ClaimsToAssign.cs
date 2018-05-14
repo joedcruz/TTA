@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TTAServer.Models
+namespace TTAServer
 {
     /// <summary>
-    /// Used by API ClaimsToAssign. Not working currently
+    /// Used by API ClaimsToAssign. Not used in this project currently
     /// </summary>
     public class ClaimsToAssign
     {

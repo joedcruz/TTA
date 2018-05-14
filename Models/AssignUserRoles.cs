@@ -1,4 +1,4 @@
-﻿namespace TTAServer.Models
+﻿namespace TTAServer
 {
     /// <summary>
     /// Used by API AssignUserRoles

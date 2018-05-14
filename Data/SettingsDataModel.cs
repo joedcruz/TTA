@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
+/// <summary>
+/// Not used in this project. However a table is created in the database during the test run
+/// </summary>
 namespace TTAServer
 {
     /// <summary>

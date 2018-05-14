@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace TTAServer.Models
+namespace TTAServer
 {
     // Used by API Register for new user registration
     public class RegistrationInfo

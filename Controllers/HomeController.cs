@@ -1,20 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
-using TTAServer.Models;
 
-namespace TTAServer.Controllers
+namespace TTAServer
 {
     /// <summary>
     /// Manages the standard web server pages
@@ -110,6 +98,10 @@ namespace TTAServer.Controllers
                 {
                     return RedirectToAction(nameof(Index));
                 }
+                else
+                {
+                    return RedirectToAction(nameof(ErrorInvalidUser));
+                }
             }
 
             return View(loginCredentials);
@@ -122,7 +114,7 @@ namespace TTAServer.Controllers
 
         public IActionResult ErrorForbidden() => View();
 
-        public IActionResult ErrorNotLoggedIn() => View();
+        public IActionResult ErrorInvalidUser() => View();
 
         [Route("logout")]
         [HttpPost]
