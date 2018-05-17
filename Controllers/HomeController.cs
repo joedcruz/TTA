@@ -81,6 +81,7 @@ namespace TTAServer
             return View();
         }
 
+
         /// <summary>
         /// An auto-login page for testing
         /// </summary>
@@ -109,32 +110,17 @@ namespace TTAServer
         }
 
 
-        //public string GetUserRoles()
-        //{
-        //    mContext.Database.EnsureCreated();
-        //    string xyz = "sss";
-
-        //    if (mContext.Roles != null)
-        //    {
-        //        var tableRecords = mContext.Roles;
-
-        //        foreach (var x in tableRecords)
-        //        {
-        //            var a = x.Name;
-        //        }
-        //    }
-
-        //    return xyz;
-        //}
-
         public IActionResult Manage()
         {
             return View();
         }
 
+
         public IActionResult ErrorForbidden() => View();
 
+
         public IActionResult ErrorInvalidUser() => View();
+
 
         [Route("logout")]
         [HttpPost]
@@ -144,20 +130,12 @@ namespace TTAServer
             return RedirectToAction(nameof(Index));
         }
 
-        // View protected with custom parameterized authorization policy
-        [MinimumAgeAuthorize(10)]
-        [Route("api/minimumage")]
-        public IActionResult MinimumAge10()
-        {
-            return View("MinimumAge", 10);
-        }
 
         // View protected with custom parameterized authorization policy
-        //[MinimumAgeAuthorize(50)]
-        [CTRAuthorize("MinimumAge50")]
-        public IActionResult MinimumAge50()
+        [ControllerIdentityAuthorize("Controller1")]
+        public IActionResult Controller1()
         {
-            return View("MinimumAge", 50);
+            return View("Page1", 50);
         }
     }
 }

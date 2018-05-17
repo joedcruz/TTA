@@ -5,13 +5,13 @@ using Microsoft.Extensions.Options;
 
 namespace TTAServer
 {
-    internal class MinimumAgePolicyProvider : IAuthorizationPolicyProvider
+    internal class ControllerIdentityPolicyProvider : IAuthorizationPolicyProvider
     {
         //const string POLICY_PREFIX = "MinimumAge";
-        const string POLICY_PREFIX = "CTR";
+        const string POLICY_PREFIX = "ControllerIdentity";
         public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
 
-        public MinimumAgePolicyProvider(IOptions<AuthorizationOptions> options)
+        public ControllerIdentityPolicyProvider(IOptions<AuthorizationOptions> options)
         {
             // ASP.NET Core only uses one authorization policy provider, so if the custom implementation
             // doesn't handle all policies (including default policies, etc.) it should fall back to an
@@ -38,12 +38,12 @@ namespace TTAServer
             //    int.TryParse(policyName.Substring(POLICY_PREFIX.Length), out var age))
             if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase))
             {
-                var age = policyName.Substring(POLICY_PREFIX.Length);
+                var controllerName = policyName.Substring(POLICY_PREFIX.Length);
                 var policy = new AuthorizationPolicyBuilder();
-                policy.AddRequirements(new MinimumAgeRequirement(age));
+                policy.AddRequirements(new ControllerIdentityRequirement(controllerName)); // minimumagerequirement change to ControllerIdentity, change age to CtrlName
                 return Task.FromResult(policy.Build());
             }
-
+            
             // If the policy name doesn't match the format expected by this policy provider,
             // try the fallback provider. If no fallback provider is used, this would return 
             // Task.FromResult<AuthorizationPolicy>(null) instead.

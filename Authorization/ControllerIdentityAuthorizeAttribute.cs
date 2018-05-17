@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 
 namespace TTAServer
 {
-    internal class CTRAuthorizeAttribute : AuthorizeAttribute
+    internal class ControllerIdentityAuthorizeAttribute : AuthorizeAttribute
     {
-        const string POLICY_PREFIX = "CTR";
+        const string POLICY_PREFIX = "ControllerIdentity";
 
         //public CTRAuthorizeAttribute(int age)
-        public CTRAuthorizeAttribute(string age)
+        public ControllerIdentityAuthorizeAttribute(string controllerName)
         {
-            Age = age;
+            ControllerName = controllerName;
         }
 
         // Get or set the Age property by manipulating the underlying Policy property
         //public int Age
-        public string Age
+        public string ControllerName
         {
             get
             {

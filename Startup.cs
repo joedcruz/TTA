@@ -27,7 +27,8 @@ namespace TTAServer
         {
             // Add ApplicationDbContext to DI
             services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(IocContainer.Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Singleton);
+            options.UseSqlServer(IocContainer.Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Singleton); // Registered ApplicatinDbContext as Singleton
+            // to have access in Policy Authorization Handloer for database access
 
             // AddIdentity adds cookie based authentication
             // Adds scoped classes for things like UserManager, SignInManager, PasswordHashers etc...
@@ -61,7 +62,7 @@ namespace TTAServer
                 })
                 .AddCookie(options =>
                 {
-                    options.AccessDeniedPath = "/account/Denied";
+                    options.AccessDeniedPath = "/home/ErrorForbidden";
                     options.LoginPath = "/home/index";
                 });
 
@@ -97,8 +98,8 @@ namespace TTAServer
             //services.AddAuthorization();
 
             //Register the Role Authorization handler
-            services.AddSingleton<IAuthorizationPolicyProvider, MinimumAgePolicyProvider>();
-            services.AddSingleton<IAuthorizationHandler, MinimumAgeAuthorizationHandler>();
+            services.AddSingleton<IAuthorizationPolicyProvider, ControllerIdentityPolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, ControllerIdentityAuthorizationHandler>();
 
             services.AddMvc();
         }

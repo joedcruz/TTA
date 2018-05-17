@@ -17,14 +17,19 @@
         <div>
             <p>Hello, @User.Identity.Name</p>
 
-            <p>
+            @*<p>
                 <a asp-action="Manage">Manage your account</a>
+
+            </p>*@
+
+             <p>
+                <a asp-action="Controller1">Controller 1</a>
 
             </p>
 
-            <ul>
+            @*<ul>
                 <li>@Html.ActionLink("Minimum Age 50", "MinimumAge50", "Home")</li>
-            </ul>
+            </ul>*@
 
             <form method="post" asp-action="Logout">
                 <button type="submit">Logout</button>
