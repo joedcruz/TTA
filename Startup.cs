@@ -2,8 +2,10 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,13 +22,14 @@ namespace TTAServer
         }
 
         public IConfiguration Configuration { get; }
-
+        
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             // Add ApplicationDbContext to DI
             services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(IocContainer.Configuration.GetConnectionString("DefaultConnection")));
+            options.UseSqlServer(IocContainer.Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Singleton); // Registered ApplicatinDbContext as Singleton
+            // to have access in Policy Authorization Handloer for database access
 
             // AddIdentity adds cookie based authentication
             // Adds scoped classes for things like UserManager, SignInManager, PasswordHashers etc...
@@ -60,8 +63,8 @@ namespace TTAServer
                 })
                 .AddCookie(options =>
                 {
-                    options.AccessDeniedPath = "/Home/ErrorForbidden";
-                    options.LoginPath = "/Home/ErrorNotLoggedIn";
+                    options.AccessDeniedPath = "/home/ErrorForbidden";
+                    options.LoginPath = "/home/index";
                 });
 
             // Change password policy
@@ -85,14 +88,21 @@ namespace TTAServer
                 options.ExpireTimeSpan = TimeSpan.FromSeconds(15);
             });
 
-            services.AddAuthorization(options =>
-            {
-                string[] r1 = new string[] { "Client", "Backoffice" };
-                string[] r2 = new string[] { "Admin", "Driver" };
-                options.AddPolicy("P_TestController1", policy => policy.RequireRole(r1));
-                options.AddPolicy("P_TestController2", policy => policy.RequireRole(r2));
-            });
-            
+            //services.AddAuthorization(options =>
+            //{
+            //    string[] r1 = new string[] { "Client", "Backoffice" };
+            //    string[] r2 = new string[] { "Admin", "Driver" };
+            //    options.AddPolicy("P_TestController1", policy => policy.RequireRole(r1));
+            //    options.AddPolicy("P_TestController2", policy => policy.RequireRole(r2));
+            //});
+
+            services.AddAuthorization();
+
+            //Register the Role Authorization handler
+            services.AddSingleton<IAuthorizationPolicyProvider, ControllerIdentityPolicyProvider>();
+            services.AddSingleton<IAuthorizationHandler, ControllerIdentityAuthorizationHandler>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddMvc();
         }
 
@@ -101,7 +111,7 @@ namespace TTAServer
         {
             // Store instance of the DI service provider so our application can access it anywhere
             IocContainer.Provider = (ServiceProvider)serviceProvider;
-                        
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -112,6 +122,8 @@ namespace TTAServer
             }
 
             app.UseStaticFiles();
+
+            app.UseStatusCodePages();
             
             // Setup Identity
             app.UseAuthentication();

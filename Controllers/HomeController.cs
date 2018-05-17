@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -81,6 +82,7 @@ namespace TTAServer
             return View();
         }
 
+
         /// <summary>
         /// An auto-login page for testing
         /// </summary>
@@ -96,6 +98,7 @@ namespace TTAServer
                 
                 if (result.Succeeded)
                 {
+                    //GetUserRoles();
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -107,14 +110,18 @@ namespace TTAServer
             return View(loginCredentials);
         }
 
+
         public IActionResult Manage()
         {
             return View();
         }
 
+
         public IActionResult ErrorForbidden() => View();
 
+
         public IActionResult ErrorInvalidUser() => View();
+
 
         [Route("logout")]
         [HttpPost]
@@ -122,6 +129,16 @@ namespace TTAServer
         {
             await mSignInManager.SignOutAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+
+        // View protected with custom parameterized authorization policy
+        //[ControllerIdentityAuthorize("Controller1")]
+        [Route("api/controller1")]
+        //[Authorize]
+        public IActionResult Controller1()
+        {
+            return View("Page1", 50);
         }
     }
 }
