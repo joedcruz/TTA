@@ -15,3 +15,13 @@ http://bitoftech.net/2015/03/31/asp-net-web-api-claims-authorization-with-asp-ne
 
 Reference for Policy Based Authorizaton for Views
 https://www.tektutorialshub.com/asp-net-core-identity-tutorial/
+
+Reference for Creating Authorization Policies dynamically 
+https://www.jerriepelser.com/blog/creating-dynamic-authorization-policies-aspnet-core/
+
+Reference for Custome Authorization Policy
+https://docs.microsoft.com/en-us/aspnet/core/security/authorization/iauthorizationpolicyprovider?view=aspnetcore-2.0
+
+Reference for Dependency Injection 
+https://joonasw.net/view/aspnet-core-di-deep-dive
+

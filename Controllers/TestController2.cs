@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace TTAServer
 {
-    //[Authorize(AuthenticationSchemes = "Bearer", Policy = "P_TestControllerA")]   
     public class TestController2 : Controller
     {
         [HttpGet]

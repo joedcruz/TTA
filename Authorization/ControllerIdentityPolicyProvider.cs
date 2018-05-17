@@ -7,7 +7,6 @@ namespace TTAServer
 {
     internal class ControllerIdentityPolicyProvider : IAuthorizationPolicyProvider
     {
-        //const string POLICY_PREFIX = "MinimumAge";
         const string POLICY_PREFIX = "ControllerIdentity";
         public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
 
@@ -28,19 +27,17 @@ namespace TTAServer
 
         public Task<AuthorizationPolicy> GetDefaultPolicyAsync() => FallbackPolicyProvider.GetDefaultPolicyAsync();
 
-        // Policies are looked up by string name, so expect 'parameters' (like age)
+        // Policies are looked up by string name, so expect 'parameters' (like controllerName)
         // to be embedded in the policy names. This is abstracted away from developers
         // by the more strongly-typed attributes derived from AuthorizeAttribute
-        // (like [MinimumAgeAuthorize] in this sample)
+        // (like [ControllerIdentityAuthorize])
         public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
         {
-            //if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase) &&
-            //    int.TryParse(policyName.Substring(POLICY_PREFIX.Length), out var age))
             if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase))
             {
                 var controllerName = policyName.Substring(POLICY_PREFIX.Length);
                 var policy = new AuthorizationPolicyBuilder();
-                policy.AddRequirements(new ControllerIdentityRequirement(controllerName)); // minimumagerequirement change to ControllerIdentity, change age to CtrlName
+                policy.AddRequirements(new ControllerIdentityRequirement(controllerName)); 
                 return Task.FromResult(policy.Build());
             }
             

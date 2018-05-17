@@ -122,6 +122,8 @@ namespace TTAServer
             }
 
             app.UseStaticFiles();
+
+            app.UseStatusCodePages();
             
             // Setup Identity
             app.UseAuthentication();

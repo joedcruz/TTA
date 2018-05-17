@@ -76,13 +76,6 @@ namespace TTAServer
                     //_logger.LogInformation("Minimum age authorization requirement {age} satisfied", requirement.Age);
                     context.Succeed(requirement);
                 }
-                //else
-                //{
-                //_logger.LogInformation("Current user's DateOfBirth claim ({dateOfBirth}) does not satisfy the minimum age authorization requirement {age}",
-                //dateOfBirthClaim.Value,
-                //  dateOfBirthClaim,
-                //requirement.Age);
-                //}
             }
                         
             return Task.CompletedTask;

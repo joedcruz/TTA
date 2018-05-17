@@ -17,7 +17,6 @@ namespace TTAServer
         {
             return Content($"TC1Method1 accessed by user {HttpContext.User.Identity.Name}", "text/html");
             //var contextClaims = HttpContext.User.Claims;
-
             // Extract UserId from User Claims
             //var userId = (contextClaims.SingleOrDefault(val => val.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")).Value;
 
