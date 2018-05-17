@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace TTAServer
 {
+    //[Authorize(AuthenticationSchemes = "Bearer", Policy = "P_TestControllerA")]   
     public class TestController2 : Controller
     {
-        [Authorize(AuthenticationSchemes = "Bearer", Policy = "P_TestController2")]
         [HttpGet]
         [Route("api/TC2Method1")]
         public IActionResult TC2Method1()

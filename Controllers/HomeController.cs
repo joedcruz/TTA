@@ -96,6 +96,7 @@ namespace TTAServer
                 
                 if (result.Succeeded)
                 {
+                    //GetUserRoles();
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -106,6 +107,25 @@ namespace TTAServer
 
             return View(loginCredentials);
         }
+
+
+        //public string GetUserRoles()
+        //{
+        //    mContext.Database.EnsureCreated();
+        //    string xyz = "sss";
+
+        //    if (mContext.Roles != null)
+        //    {
+        //        var tableRecords = mContext.Roles;
+
+        //        foreach (var x in tableRecords)
+        //        {
+        //            var a = x.Name;
+        //        }
+        //    }
+
+        //    return xyz;
+        //}
 
         public IActionResult Manage()
         {
@@ -122,6 +142,21 @@ namespace TTAServer
         {
             await mSignInManager.SignOutAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // View protected with custom parameterized authorization policy
+        [MinimumAgeAuthorize(10)]
+        [Route("api/minimumage")]
+        public IActionResult MinimumAge10()
+        {
+            return View("MinimumAge", 10);
+        }
+
+        // View protected with custom parameterized authorization policy
+        [MinimumAgeAuthorize(50)]
+        public IActionResult MinimumAge50()
+        {
+            return View("MinimumAge", 50);
         }
     }
 }

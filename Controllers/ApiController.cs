@@ -116,8 +116,8 @@ namespace TTAServer
             //claims.AddRange(userClaims);
 
             // Get all the roles assigned to the user
-            var userRoles = await mUserManager.GetRolesAsync(user);            
-            
+            var userRoles = await mUserManager.GetRolesAsync(user);
+
             // Add each role to the claim
             foreach (var userRole in userRoles)
             {
@@ -217,35 +217,35 @@ namespace TTAServer
         /// </summary>
         /// <param name="claimsToAssign"></param>
         /// <returns></returns>
-        //[Route("api/assignclaims")]
-        //[HttpPut]
-        //public async Task<IActionResult> AssignClaimsToUser([FromBody] ClaimsToAssign claimsToAssign)
-        //{
+        [Route("api/assignclaims")]
+        [HttpPut]
+        public async Task<IActionResult> AssignClaimsToUser([FromBody] ClaimsToAssign claimsToAssign)
+        {
 
-        //    if (!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelState);
-        //    }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        //    var user = await mUserManager.FindByNameAsync(claimsToAssign.Username);
+            var user = await mUserManager.FindByNameAsync(claimsToAssign.Username);
 
-        //    if (user == null)
-        //    {
-        //        return NotFound();
-        //    }
+            if (user == null)
+            {
+                return NotFound();
+            }
 
-        //    foreach (ClaimsToAssign.ClaimBindingModel claimModel in claimsToAssign.NewClaims)
-        //    {
-        //        if (user.Claims.Any(c => c.ClaimType == claimModel.Type))
-        //        {
-        //            await mUserManager.RemoveClaimAsync(user, ExtendedClaimsProvider.CreateClaim(claimModel.Type, claimModel.Value));
-        //        }
+            foreach (ClaimsToAssign.ClaimBindingModel claimModel in claimsToAssign.NewClaims)
+            {
+                //if (user.Claims.Any(c => c.ClaimType == claimModel.Type))
+                //{
+                //    await mUserManager.RemoveClaimAsync(user, ExtendedClaimsProvider.CreateClaim(claimModel.Type, claimModel.Value));
+                //}
 
-        //        await mUserManager.AddClaimAsync(user, ExtendedClaimsProvider.CreateClaim(claimModel.Type, claimModel.Value));
-        //    }
+                await mUserManager.AddClaimAsync(user, ExtendedClaimsProvider.CreateClaim(claimModel.Type, claimModel.Value));
+            }
 
-        //    return Ok();
-        //}
+            return Ok();
+        }
 
     }
 }

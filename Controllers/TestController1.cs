@@ -5,7 +5,7 @@ namespace TTAServer
 {
     public class TestController1 : Controller
     {
-        [Authorize(AuthenticationSchemes = "Bearer", Policy = "P_TestController1")]
+        //[Authorize(AuthenticationSchemes = "Bearer", Policy = "P_TestController1")]
         [HttpGet]
         [Route("api/TC1Method1")]
         public IActionResult TC1Method1()
