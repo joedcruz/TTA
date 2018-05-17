@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
@@ -132,7 +133,9 @@ namespace TTAServer
 
 
         // View protected with custom parameterized authorization policy
-        [ControllerIdentityAuthorize("Controller1")]
+        //[ControllerIdentityAuthorize("Controller1")]
+        [Route("api/controller1")]
+        //[Authorize]
         public IActionResult Controller1()
         {
             return View("Page1", 50);

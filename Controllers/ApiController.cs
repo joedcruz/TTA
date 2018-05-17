@@ -111,6 +111,9 @@ namespace TTAServer
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName)              
             };
 
+            // Add user id to the claim
+            claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
+
             // Add other user claims
             //var userClaims = await mUserManager.GetClaimsAsync(user);
             //claims.AddRange(userClaims);
