@@ -7,7 +7,8 @@ namespace TTAServer
 {
     internal class MinimumAgePolicyProvider : IAuthorizationPolicyProvider
     {
-        const string POLICY_PREFIX = "MinimumAge";
+        //const string POLICY_PREFIX = "MinimumAge";
+        const string POLICY_PREFIX = "CTR";
         public DefaultAuthorizationPolicyProvider FallbackPolicyProvider { get; }
 
         public MinimumAgePolicyProvider(IOptions<AuthorizationOptions> options)
@@ -33,9 +34,11 @@ namespace TTAServer
         // (like [MinimumAgeAuthorize] in this sample)
         public Task<AuthorizationPolicy> GetPolicyAsync(string policyName)
         {
-            if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase) &&
-                int.TryParse(policyName.Substring(POLICY_PREFIX.Length), out var age))
+            //if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase) &&
+            //    int.TryParse(policyName.Substring(POLICY_PREFIX.Length), out var age))
+            if (policyName.StartsWith(POLICY_PREFIX, StringComparison.OrdinalIgnoreCase))
             {
+                var age = policyName.Substring(POLICY_PREFIX.Length);
                 var policy = new AuthorizationPolicyBuilder();
                 policy.AddRequirements(new MinimumAgeRequirement(age));
                 return Task.FromResult(policy.Build());

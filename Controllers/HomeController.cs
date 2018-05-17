@@ -153,7 +153,8 @@ namespace TTAServer
         }
 
         // View protected with custom parameterized authorization policy
-        [MinimumAgeAuthorize(50)]
+        //[MinimumAgeAuthorize(50)]
+        [CTRAuthorize("MinimumAge50")]
         public IActionResult MinimumAge50()
         {
             return View("MinimumAge", 50);
