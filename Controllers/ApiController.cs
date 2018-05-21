@@ -160,7 +160,7 @@ namespace TTAServer
         /// <returns></returns>
         [Route("api/assignrolestouser")]
         [HttpPut]
-        public async Task<IActionResult> AssignRolesToUser([FromBody]AssignUserRoles rolesToAssign)
+        public async Task<IActionResult> AssignRolesToUser([FromBody]UserRolesModel rolesToAssign)
         {
             // Find the user using the Username
             var user = await mUserManager.FindByNameAsync(rolesToAssign.Username);
@@ -175,12 +175,12 @@ namespace TTAServer
             var currentRoles = await mUserManager.GetRolesAsync(user);
 
             // Check if the existing roles assigned are different from the new roles to be aassigned
-            var rolesNotExists = rolesToAssign.NewRoles.Except(mRoleManager.Roles.Select(x => x.Name)).ToArray();
+            var rolesNotExists = rolesToAssign.RoleNames.Except(mRoleManager.Roles.Select(x => x.Name)).ToArray();
 
             // If the new roles to be assigned are different from the existing roles assigned
             if (rolesNotExists.Count() > 0)
             {
-                foreach (string newRole in rolesToAssign.NewRoles)
+                foreach (string newRole in rolesToAssign.RoleNames)
                 {
                     // Check if the new role already exist in the database. If not create the new role
                     if (!await mRoleManager.RoleExistsAsync(newRole))
@@ -201,7 +201,7 @@ namespace TTAServer
             }
 
             // If removing current roles succeeded, then assign all the new roles to the user
-            IdentityResult addResult = await mUserManager.AddToRolesAsync(user, rolesToAssign.NewRoles);
+            IdentityResult addResult = await mUserManager.AddToRolesAsync(user, rolesToAssign.RoleNames);
 
             // If unable to assign the role to the user, exit
             if (!addResult.Succeeded)

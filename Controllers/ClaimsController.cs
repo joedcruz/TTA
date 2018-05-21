@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,7 @@ namespace TTAServer
         public IActionResult GetClaims()
         {
             var identity = User.Identity as ClaimsIdentity;
-
+            
             var claims = from c in identity.Claims
                          select new
                          {
