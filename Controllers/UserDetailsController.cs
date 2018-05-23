@@ -39,8 +39,9 @@ namespace TTAServer
 
         [AuthorizeToken]
         [Route("api/UserInfo")]
-        //public async Task<IActionResult> GetUserInfo()
-        public async Task<UserInfoModel> GetUserInfo()
+        [ProducesResponseType(200, Type = typeof(UserInfoModel))]
+        public async Task<IActionResult> GetUserInfo()
+        //public async Task<UserInfoModel> GetUserInfo()
         {
             UserInfoModel userInfo = new UserInfoModel();
 
@@ -73,34 +74,21 @@ namespace TTAServer
                         userInfo.UserId = c.Value;
                     }
                 }
-                
+
                 var result = await mUserManager.FindByIdAsync(user);
+                
                 if (result != null)
                 {
                     userInfo.UserId = result.Id;
                     userInfo.CUID = result.CUID;
                     userInfo.Username = result.UserName;
                 }
-                
-                //foreach (Claim d in claims)
-                //{
-                //    if (d.Type == ClaimTypes.Name)
-                //        userInfo.Username = result.UserName;
-
-                //    if (d.Type == ClaimTypes.Email)
-                //        userInfo.Email = result.Email;
-
-                //    if (d.Type == ClaimTypes.MobilePhone)
-                //        userInfo.Phone = result.PhoneNumber;
-
-                //    TODO: Include CUID from user table
-                //}
             }
 
-            //return Ok(userInfo);
-            return userInfo;
+            return Ok(userInfo);
         }
         
+        //[AuthorizeToken]
         [Route("api/UserRoles")]
         public string[] GetUserRoles([FromBody] UserInfoModel userInfo)
         {
