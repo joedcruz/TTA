@@ -88,22 +88,28 @@ namespace TTAServer
             return Ok(userInfo);
         }
         
-        //[AuthorizeToken]
+        [AuthorizeToken]
         [Route("api/UserRoles")]
+        //[ProducesResponseType(200, Type = typeof(UserRolesModel))]
         public string[] GetUserRoles([FromBody] UserInfoModel userInfo)
+        //public Task<IActionResult> GetUserRoles([FromBody] UserInfoModel userInfo)
         {
             var roles = _dbContext.UserRoles.Where(aaa => aaa.UserId == userInfo.UserId);
+
+            //UserRolesModel userRolesModel = new UserRolesModel();
 
             string[] currentRoles = new string[roles.Count()];
 
             var i = 0;
             foreach (var ccc in roles)
             {
+                //userRolesModel.RoleIds = ccc.RoleId;
                 currentRoles[i] = ccc.RoleId;
                 i++;
             }
 
             return currentRoles;
+            //return Ok(userRolesModel);
         }
 
         [Route("api/RoleClaims")]
