@@ -7,6 +7,6 @@ namespace TTAServer
     /// </summary>
     public class ApplicationUser : IdentityUser
     {
-        
+        public long CUID { get; set; }
     }
 }

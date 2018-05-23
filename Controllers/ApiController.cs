@@ -60,6 +60,7 @@ namespace TTAServer
         /// <returns></returns>
         [Route("api/register")]
         [HttpPost]
+        // To check: does not work when CUID is set in ApplicationUser
         public async Task<IActionResult> RegisterAsync([FromBody] RegistrationInfo registrationInfo)
         {
             var user = new ApplicationUser { UserName = registrationInfo.MobileNo, PhoneNumber = registrationInfo.MobileNo };
@@ -78,7 +79,7 @@ namespace TTAServer
         /// <param name="loginCredentials">Credentials are Username and Password</param>
         /// <returns></returns>
         [Route("api/login")]
-        public async Task<IActionResult> LogInAsync([FromBody]LoginCredentials loginCredentials)
+        public async Task<string> LogInAsync([FromBody]LoginCredentials loginCredentials)
         {
             // Get users login information and check it is correct
 
@@ -88,8 +89,9 @@ namespace TTAServer
             var user = await mUserManager.FindByNameAsync(loginCredentials.MobileNo);
 
             // If we failed to find a user
-            if (user == null)
-                return Content("Cannot find user", "text/html");
+            //if (user == null)
+            //    //return StatusCode
+            //    return Content("Cannot find user", "text/html");
 
             // If we got here, we have a user
             // Let's validate the password
@@ -97,8 +99,8 @@ namespace TTAServer
             // Check if password is valid
             var isValidPassword = await mUserManager.CheckPasswordAsync(user, loginCredentials.Password);
 
-            if (!isValidPassword)
-                return Content("Incorrect password", "text/html");
+            //if (!isValidPassword)
+            //    return Content("Incorrect password", "text/html");
 
             // If we get here, we are valid and the user passed the correct login details
 
@@ -144,10 +146,14 @@ namespace TTAServer
                 signingCredentials: credentials
                 );
 
-            return Ok(new
-            {
-                token = new JwtSecurityTokenHandler().WriteToken(token)
-            });
+            string encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
+
+            return encodedToken;
+
+            //return Ok(new
+            //{
+            //    token = new JwtSecurityTokenHandler().WriteToken(token)
+            //});
 
             // Use this if the extension class is used
             //token = user.GenerateJwtToken();
