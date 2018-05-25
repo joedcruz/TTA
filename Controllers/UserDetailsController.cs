@@ -23,25 +23,15 @@ namespace TTAServer
             mUserManager = userManager;
             _dbContext = dbContext;
         }
-
-        //[Route("api/UserInfo")]
-        //public async Task<IActionResult> GetUserInfo([FromBody] UserInfoModel userInfo)
-        //{
-        //    var user = await mUserManager.FindByNameAsync(userInfo.Username);
-
-        //    userInfo.UserId = user.Id;
-        //    userInfo.Email = user.Email;
-        //    userInfo.Phone = user.PhoneNumber;
-
-        //    //return Ok(user);
-        //    return Ok(userInfo);
-        //}
-
+              
+        /// <summary>
+        /// Api to retrive user info from the aspnetusers table
+        /// </summary>
+        /// <returns></returns>
         [AuthorizeToken]
         [Route("api/UserInfo")]
         [ProducesResponseType(200, Type = typeof(UserInfoModel))]
         public async Task<IActionResult> GetUserInfo()
-        //public async Task<UserInfoModel> GetUserInfo()
         {
             UserInfoModel userInfo = new UserInfoModel();
 
@@ -88,30 +78,37 @@ namespace TTAServer
             return Ok(userInfo);
         }
         
+
+        /// <summary>
+        /// Api to retrieve user roles from aspnetuserroles table 
+        /// </summary>
+        /// <param name="userInfo">UserId</param>
+        /// <returns>currentRoles</returns>
         [AuthorizeToken]
         [Route("api/UserRoles")]
-        //[ProducesResponseType(200, Type = typeof(UserRolesModel))]
         public string[] GetUserRoles([FromBody] UserInfoModel userInfo)
-        //public Task<IActionResult> GetUserRoles([FromBody] UserInfoModel userInfo)
         {
             var roles = _dbContext.UserRoles.Where(aaa => aaa.UserId == userInfo.UserId);
-
-            //UserRolesModel userRolesModel = new UserRolesModel();
-
+            
             string[] currentRoles = new string[roles.Count()];
 
             var i = 0;
             foreach (var ccc in roles)
             {
-                //userRolesModel.RoleIds = ccc.RoleId;
                 currentRoles[i] = ccc.RoleId;
                 i++;
             }
 
             return currentRoles;
-            //return Ok(userRolesModel);
         }
 
+
+        /// <summary>
+        /// Api to retrieve role claims from the aspnetroleclaims table
+        /// </summary>
+        /// <param name="rClaims">claim type and claim value</param>
+        /// <returns>assigned claims for a role</returns>
+        [AuthorizeToken]
         [Route("api/RoleClaims")]
         public string[] GetRoleClaims([FromBody] RolesClaimsModel rClaims)
         {
