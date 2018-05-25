@@ -29,7 +29,7 @@ namespace TTAServer
         /// </summary>
         /// <returns></returns>
         [AuthorizeToken]
-        [Route("api/UserInfo")]
+        [Route("api/userinfo")]
         [ProducesResponseType(200, Type = typeof(UserInfoModel))]
         public async Task<IActionResult> GetUserInfo()
         {
@@ -85,7 +85,7 @@ namespace TTAServer
         /// <param name="userInfo">UserId</param>
         /// <returns>currentRoles</returns>
         [AuthorizeToken]
-        [Route("api/UserRoles")]
+        [Route("api/userroles")]
         public string[] GetUserRoles([FromBody] UserInfoModel userInfo)
         {
             var roles = _dbContext.UserRoles.Where(aaa => aaa.UserId == userInfo.UserId);
@@ -109,7 +109,7 @@ namespace TTAServer
         /// <param name="rClaims">claim type and claim value</param>
         /// <returns>assigned claims for a role</returns>
         [AuthorizeToken]
-        [Route("api/RoleClaims")]
+        [Route("api/roleclaims")]
         public string[] GetRoleClaims([FromBody] RolesClaimsModel rClaims)
         {
             var roleClaims = _dbContext.RoleClaims.Where(bbb => bbb.ClaimType == rClaims.Type && bbb.ClaimValue == rClaims.Value);

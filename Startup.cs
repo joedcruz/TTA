@@ -81,20 +81,9 @@ namespace TTAServer
             // Change login URL
             services.ConfigureApplicationCookie(options =>
             {
-                // Redirect to /login
-                options.LoginPath = "/Home/ErrorNotLoggedIn";
-
                 // Change cookie timeout to expire in 15 seconds
                 options.ExpireTimeSpan = TimeSpan.FromSeconds(15);
             });
-
-            //services.AddAuthorization(options =>
-            //{
-            //    string[] r1 = new string[] { "Client", "Backoffice" };
-            //    string[] r2 = new string[] { "Admin", "Driver" };
-            //    options.AddPolicy("P_TestController1", policy => policy.RequireRole(r1));
-            //    options.AddPolicy("P_TestController2", policy => policy.RequireRole(r2));
-            //});
 
             services.AddAuthorization();
 

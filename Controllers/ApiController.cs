@@ -87,20 +87,12 @@ namespace TTAServer
 
             // Get the user details
             var user = await mUserManager.FindByNameAsync(loginCredentials.MobileNo);
-
-            // If we failed to find a user
-            //if (user == null)
-            //    //return StatusCode
-            //    return Content("Cannot find user", "text/html");
-
+            
             // If we got here, we have a user
             // Let's validate the password
 
             // Check if password is valid
             var isValidPassword = await mUserManager.CheckPasswordAsync(user, loginCredentials.Password);
-
-            //if (!isValidPassword)
-            //    return Content("Incorrect password", "text/html");
 
             // If we get here, we are valid and the user passed the correct login details
 
@@ -115,11 +107,7 @@ namespace TTAServer
 
             // Add user id to the claim
             claims.Add(new Claim(ClaimTypes.NameIdentifier, user.Id));
-
-            // Add other user claims
-            //var userClaims = await mUserManager.GetClaimsAsync(user);
-            //claims.AddRange(userClaims);
-
+            
             // Get all the roles assigned to the user
             var userRoles = await mUserManager.GetRolesAsync(user);
 
@@ -149,14 +137,6 @@ namespace TTAServer
             string encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
 
             return encodedToken;
-
-            //return Ok(new
-            //{
-            //    token = new JwtSecurityTokenHandler().WriteToken(token)
-            //});
-
-            // Use this if the extension class is used
-            //token = user.GenerateJwtToken();
         }
 
         /// <summary>
@@ -217,44 +197,6 @@ namespace TTAServer
             }
 
             return Ok();
-        }
-
-        /// <summary>
-        /// Api to assign new claims to the user
-        /// Currently not used in this project
-        /// The error is because the User object user here is not the extended Application user. 
-        /// </summary>
-        /// <param name="claimsToAssign"></param>
-        /// <returns></returns>
-        [Route("api/assignclaims")]
-        [HttpPut]
-        public async Task<IActionResult> AssignClaimsToUser([FromBody] ClaimsToAssign claimsToAssign)
-        {
-
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var user = await mUserManager.FindByNameAsync(claimsToAssign.Username);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-
-            foreach (ClaimsToAssign.ClaimBindingModel claimModel in claimsToAssign.NewClaims)
-            {
-                //if (user.Claims.Any(c => c.ClaimType == claimModel.Type))
-                //{
-                //    await mUserManager.RemoveClaimAsync(user, ExtendedClaimsProvider.CreateClaim(claimModel.Type, claimModel.Value));
-                //}
-
-                await mUserManager.AddClaimAsync(user, ExtendedClaimsProvider.CreateClaim(claimModel.Type, claimModel.Value));
-            }
-
-            return Ok();
-        }
-
+        }        
     }
 }
