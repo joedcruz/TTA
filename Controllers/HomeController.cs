@@ -88,27 +88,27 @@ namespace TTAServer
         /// </summary>
         /// <param name="returnUrl">The url to return to if successfully logged in</param>
         /// <returns></returns>
-        [Route("login")]
-        [HttpPost]
-        public async Task<IActionResult> Login(LoginCredentials loginCredentials)
-        {
-            if (ModelState.IsValid)
-            {
-                var result = await mSignInManager.PasswordSignInAsync(loginCredentials.MobileNo, loginCredentials.Password, false, false);
+        //[Route("login")]
+        //[HttpPost]
+        //public async Task<IActionResult> Login(LoginCredentials loginCredentials)
+        //{
+            //if (ModelState.IsValid)
+            //{
+            //    var result = await mSignInManager.PasswordSignInAsync(loginCredentials.MobileNo, loginCredentials.Password, false, false);
                 
-                if (result.Succeeded)
-                {
-                    //GetUserRoles();
-                    return RedirectToAction(nameof(Index));
-                }
-                else
-                {
-                    return RedirectToAction(nameof(ErrorInvalidUser));
-                }
-            }
+            //    if (result.Succeeded)
+            //    {
+            //        //GetUserRoles();
+            //        return RedirectToAction(nameof(Index));
+            //    }
+            //    else
+            //    {
+            //        return RedirectToAction(nameof(ErrorInvalidUser));
+            //    }
+            //}
 
-            return View(loginCredentials);
-        }
+            //return View(loginCredentials);
+        //}
 
 
         public IActionResult Manage()
