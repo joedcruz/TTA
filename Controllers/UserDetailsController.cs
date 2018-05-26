@@ -23,7 +23,7 @@ namespace TTAServer
             mUserManager = userManager;
             _dbContext = dbContext;
         }
-              
+
         /// <summary>
         /// Api to retrive user info from the aspnetusers table
         /// </summary>
@@ -50,12 +50,12 @@ namespace TTAServer
 
             var user = "";
 
-            if(readableToken == true)
+            if (readableToken == true)
             {
                 var token = jwtHandler.ReadJwtToken(jwtInput);
 
                 var claims = token.Claims;
-                
+
                 foreach (Claim c in claims)
                 {
                     if (c.Type == ClaimTypes.NameIdentifier)
@@ -66,7 +66,7 @@ namespace TTAServer
                 }
 
                 var result = await mUserManager.FindByIdAsync(user);
-                
+
                 if (result != null)
                 {
                     userInfo.UserId = result.Id;
@@ -77,7 +77,7 @@ namespace TTAServer
 
             return Ok(userInfo);
         }
-        
+
 
         /// <summary>
         /// Api to retrieve user roles from aspnetuserroles table 
@@ -89,7 +89,7 @@ namespace TTAServer
         public string[] GetUserRoles([FromBody] UserInfoModel userInfo)
         {
             var roles = _dbContext.UserRoles.Where(aaa => aaa.UserId == userInfo.UserId);
-            
+
             string[] currentRoles = new string[roles.Count()];
 
             var i = 0;
