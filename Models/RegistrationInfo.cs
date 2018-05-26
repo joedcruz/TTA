@@ -5,7 +5,6 @@ namespace TTAServer
     // Used by API Register for new user registration
     public class RegistrationInfo
     {
-        // Mobile No as Username
         [Required]
         [Display(Name = "Mobile No.")]
         public string MobileNo { get; set; }
