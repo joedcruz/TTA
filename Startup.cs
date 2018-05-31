@@ -31,6 +31,10 @@ namespace TTAServer
             options.UseSqlServer(IocContainer.Configuration.GetConnectionString("DefaultConnection")),ServiceLifetime.Singleton); // Registered ApplicatinDbContext as Singleton
             // to have access in Policy Authorization Handloer for database access
 
+            // Database context for the normal database operations
+            services.AddDbContext<TTADbContext>(options =>
+            options.UseSqlServer(IocContainer.Configuration.GetConnectionString("DefaultConnection")));
+
             // AddIdentity adds cookie based authentication
             // Adds scoped classes for things like UserManager, SignInManager, PasswordHashers etc...
             // NOTE: Automatically adds the validated user from a cookie to the HttpContext.User

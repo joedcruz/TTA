@@ -14,7 +14,7 @@ namespace TTAServer
         /// The unique Id for this entry
         /// </summary>
         [Key]
-        public string Id { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
         /// The settings name
@@ -29,5 +29,23 @@ namespace TTAServer
         [Required]
         [MaxLength(2048)]
         public string Value { get; set; }
+
+        public SettingsDataModel()
+        {
+
+        }
+
+        public SettingsDataModel(string name, string value)
+        {
+            this.Name = name;
+            this.Value = value;
+        }
+
+        public SettingsDataModel(int id, string name, string value)
+        {
+            this.Id = id;
+            this.Name = name;
+            this.Value = value;
+        }
     }
 }

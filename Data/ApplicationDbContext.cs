@@ -16,7 +16,7 @@ namespace TTAServer
         /// <summary>
         /// The settings for this application
         /// </summary>
-        public DbSet<SettingsDataModel> Settings { get; set; }
+        //public DbSet<SettingsDataModel> Settings { get; set; }
 
         #endregion
 
