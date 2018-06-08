@@ -7,6 +7,7 @@ namespace TTAServer
         #region Public Properties
 
         public DbSet<SettingsDataModel> Settings { get; set; }
+        public DbSet<WebMenuModel> tblWebMenu { get; set; }
 
         #endregion
 

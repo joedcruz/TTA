@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace TTAServer
 {
@@ -7,6 +8,7 @@ namespace TTAServer
     /// </summary>
     public class ApplicationUser : IdentityUser
     {
-        public long CUID { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public long CUID { get; private set; }
     }
 }

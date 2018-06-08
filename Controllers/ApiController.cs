@@ -61,7 +61,6 @@ namespace TTAServer
         /// <returns></returns>
         [Route("api/register")]
         [HttpPost]
-        // To check: does not work when CUID is set in ApplicationUser
         public async Task<IActionResult> RegisterAsync([FromBody] RegistrationInfo registrationInfo)
         {
             var user = new ApplicationUser { UserName = registrationInfo.MobileNo, PhoneNumber = registrationInfo.MobileNo };

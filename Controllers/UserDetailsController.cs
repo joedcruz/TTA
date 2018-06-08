@@ -17,11 +17,13 @@ namespace TTAServer
     {
         protected UserManager<ApplicationUser> mUserManager;
         protected ApplicationDbContext _dbContext;
+        protected TTADbContext _ttaDbContext;
 
-        public UserDetailsController(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext)
+        public UserDetailsController(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, TTADbContext ttaDbContext)
         {
             mUserManager = userManager;
             _dbContext = dbContext;
+            _ttaDbContext = ttaDbContext;
         }
 
         /// <summary>
@@ -125,5 +127,93 @@ namespace TTAServer
 
             return assignedClaims;
         }
+
+
+        //[AuthorizeToken]
+        [Route("api/getwebusermenu")]
+        public List<WebMenuModel> GetWebUserMenu([FromBody] UserInfoModel userInfo)
+        {
+            // Select all the roles assigned to the user
+            var roles = _dbContext.UserRoles.Where(aaa => aaa.UserId == userInfo.UserId);
+
+            // Select all the role claims where claim type is a Form
+            var roleClaims = _dbContext.RoleClaims.Where(bbb => bbb.ClaimType == "Form");
+
+
+
+            // string[] assignedClaims = new string[roleClaims.Count()];
+            List<string> assignedClaims = new List<string>();
+
+
+            var i = 0;
+            foreach (var ccc in roles)
+            {
+                foreach (var ddd in roleClaims)
+                {
+                    if (ccc.RoleId == ddd.RoleId)
+                    {
+                        if (assignedClaims == null)
+                        {
+                            assignedClaims.Add(ddd.ClaimValue);
+                            i++;
+                        }
+                        else 
+                        {
+                            if (!assignedClaims.Contains(ddd.ClaimValue))
+                            {
+                                assignedClaims.Add(ddd.ClaimValue);
+                                i++;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Select all menu options for the role
+            var menuOptions = _ttaDbContext.tblWebMenu;
+
+            List<WebMenuModel> webMenu = new List<WebMenuModel>();
+            
+            foreach (var eee in menuOptions)
+            {
+                foreach (var fff in assignedClaims)
+                {
+                    if (eee.FormId == fff.ToString())
+                    {
+                        webMenu.Add(new WebMenuModel
+                        {
+                            ItemId = eee.ItemId,
+                            DisplayName = eee.DisplayName,
+                            ParentId = eee.ParentId,
+                            OrderNo = eee.OrderNo,
+                            FormId = eee.FormId
+                        });
+
+                        int parentId = eee.ParentId;
+                        foreach (var ggg in menuOptions.OrderByDescending(ord => ord.ItemId))
+                        {
+                            if (ggg.ItemId == parentId && ggg.ParentId >= 0)
+                            {
+                                if (!webMenu.Any(item => item.ItemId == ggg.ItemId))
+                                {
+                                    parentId = ggg.ParentId;
+                                    webMenu.Add(new WebMenuModel
+                                    {
+                                        ItemId = ggg.ItemId,
+                                        DisplayName = ggg.DisplayName,
+                                        ParentId = ggg.ParentId,
+                                        OrderNo = ggg.OrderNo,
+                                        FormId = ggg.FormId
+                                    });
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return webMenu;
+        }
+
     }
 }
