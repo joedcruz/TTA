@@ -91,6 +91,8 @@ namespace TTAServer
 
             services.AddAuthorization();
 
+            services.AddCors();
+
             //Register the Role Authorization handler
             services.AddSingleton<IAuthorizationPolicyProvider, ControllerIdentityPolicyProvider>();
             services.AddSingleton<IAuthorizationHandler, ControllerIdentityAuthorizationHandler>();
@@ -120,6 +122,9 @@ namespace TTAServer
             
             // Setup Identity
             app.UseAuthentication();
+
+            app.UseCors(builder =>
+            builder.AllowAnyOrigin());
             
             app.UseMvc(routes =>
             {

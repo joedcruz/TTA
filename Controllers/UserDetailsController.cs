@@ -18,6 +18,7 @@ namespace TTAServer
         protected UserManager<ApplicationUser> mUserManager;
         protected ApplicationDbContext _dbContext;
         protected TTADbContext _ttaDbContext;
+        public string _menuString;
 
         public UserDetailsController(UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext, TTADbContext ttaDbContext)
         {
@@ -25,7 +26,7 @@ namespace TTAServer
             _dbContext = dbContext;
             _ttaDbContext = ttaDbContext;
         }
-
+        
         /// <summary>
         /// Api to retrive user info from the aspnetusers table
         /// </summary>
@@ -115,7 +116,7 @@ namespace TTAServer
         public string[] GetRoleClaims([FromBody] RolesClaimsModel rClaims)
         {
             var roleClaims = _dbContext.RoleClaims.Where(bbb => bbb.ClaimType == rClaims.Type && bbb.ClaimValue == rClaims.Value);
-
+            
             string[] assignedClaims = new string[roleClaims.Count()];
 
             var i = 0;
@@ -132,6 +133,7 @@ namespace TTAServer
         //[AuthorizeToken]
         [Route("api/getwebusermenu")]
         public List<WebMenuModel> GetWebUserMenu([FromBody] UserInfoModel userInfo)
+        //public string GetWebUserMenu([FromBody] UserInfoModel userInfo)
         {
             // Select all the roles assigned to the user
             var roles = _dbContext.UserRoles.Where(aaa => aaa.UserId == userInfo.UserId);
@@ -145,7 +147,7 @@ namespace TTAServer
             List<string> assignedClaims = new List<string>();
 
 
-            var i = 0;
+            //var i = 0;
             foreach (var ccc in roles)
             {
                 foreach (var ddd in roleClaims)
@@ -155,14 +157,14 @@ namespace TTAServer
                         if (assignedClaims == null)
                         {
                             assignedClaims.Add(ddd.ClaimValue);
-                            i++;
+                            //i++;
                         }
                         else 
                         {
                             if (!assignedClaims.Contains(ddd.ClaimValue))
                             {
                                 assignedClaims.Add(ddd.ClaimValue);
-                                i++;
+                                //i++;
                             }
                         }
                     }
@@ -212,8 +214,55 @@ namespace TTAServer
                 }
             }
 
+            //List<WebMenuModel> menus = webMenu.OrderBy(ord => ord.ItemId).ToList();
+            //_menuString = "";
+            //BuildMenu(menus);
+
+            //return _menuString;
             return webMenu;
+
         }
 
+        public void BuildMenu(List<WebMenuModel> fullMenu)
+        {
+            _menuString = "<ul class='nav navbar-nav'>";
+
+            foreach (var menu in fullMenu)
+            {
+                if (menu.ParentId == 0)
+                {
+                    SubMenu(fullMenu, menu);
+                }
+            }
+            _menuString = _menuString + "</ul>";
+        }
+
+        public void SubMenu(List<WebMenuModel> fullMenu, WebMenuModel menu)
+        {
+            //_menuList = _menuList + "<li [routerLinkActive]=\"['link-active']\">< a[routerLink] = \"['/home']\" >< span class='glyphicon glyphicon-home'></span>" + page.DisplayName + "</a>";
+            _menuString = _menuString + "<li><a><span class='glyphicon glyphicon-home'></span>" + menu.DisplayName + "</a>";
+
+            var subMenus = fullMenu.Where(p => p.ParentId == menu.ItemId);
+
+            if (subMenus.Count() > 0)
+            {
+                _menuString = _menuString + "<ul class='nav navbar-nav'>";
+
+                foreach (WebMenuModel p in subMenus)
+                {
+                    if (fullMenu.Count(x => x.ParentId == p.ItemId) > 0)
+                    {
+                        SubMenu(fullMenu, p);
+                    }
+                    else
+                    {
+                        //_menuList = _menuList + "<li [routerLinkActive]=\"['link-active']\">< a[routerLink] = \"['/home']\" >< span class='glyphicon glyphicon-th-list'></span>" + p.DisplayName + "</a></li>";
+                        _menuString = _menuString + "<li><a><span class='glyphicon glyphicon-th-list'></span>" + p.DisplayName + "</a></li>";
+                    }
+                }
+                _menuString = _menuString + "</ul>";
+            }
+            _menuString = _menuString + "</li>";
+        }
     }
 }
