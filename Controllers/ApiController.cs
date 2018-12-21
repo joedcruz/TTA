@@ -135,7 +135,7 @@ namespace TTAServer
                 );
 
             string encodedToken = new JwtSecurityTokenHandler().WriteToken(token);
-
+            
             return encodedToken;
         }
 

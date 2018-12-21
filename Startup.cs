@@ -55,7 +55,7 @@ namespace TTAServer
                 .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
-                    {
+                    { 
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateLifetime = true,
@@ -123,8 +123,11 @@ namespace TTAServer
             // Setup Identity
             app.UseAuthentication();
 
-            app.UseCors(builder =>
-            builder.AllowAnyOrigin());
+            app.UseCors(builder => {
+                builder.AllowAnyHeader(); 
+                builder.AllowAnyOrigin();
+                builder.AllowAnyMethod();
+            });
             
             app.UseMvc(routes =>
             {

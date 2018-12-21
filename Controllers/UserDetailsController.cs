@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -130,10 +132,12 @@ namespace TTAServer
         }
 
 
-        //[AuthorizeToken]
+        [AuthorizeToken]
         [Route("api/getwebusermenu")]
         public List<WebMenuModel> GetWebUserMenu([FromBody] UserInfoModel userInfo)
         //public string GetWebUserMenu([FromBody] UserInfoModel userInfo)
+        //public IActionResult GetWebUserMenu([FromBody] UserInfoModel userInfo)
+        //public List<NavItem> GetWebUserMenu([FromBody] UserInfoModel userInfo)
         {
             // Select all the roles assigned to the user
             var roles = _dbContext.UserRoles.Where(aaa => aaa.UserId == userInfo.UserId);
@@ -216,12 +220,112 @@ namespace TTAServer
 
             //List<WebMenuModel> menus = webMenu.OrderBy(ord => ord.ItemId).ToList();
             //_menuString = "";
-            //BuildMenu(menus);
+            //BuildAngularMenu(menus);
+            //NewAngularMenu(menus);
+
+            //_menuString = "{\"displayName\":\"A\",\"children\":{\"displayName\":\"AA1 - Page1\"},\"displayName\":\"B\",\"children\":{\"displayName\":\"BB1\",\"children\":{\"displayName\":\"BBB1 - Page3\"}}}";
+            //List<NavItem> navMenu = JsonConvert.DeserializeObject<List<NavItem>>(_menuString);
 
             //return _menuString;
+            //return Ok(JsonConvert.SerializeObject(_menuString));
             return webMenu;
-
+            //return navMenu;
         }
+
+
+
+        //public List<NavItem> navMenu = new List<NavItem>();
+
+
+        public void NewAngularMenu(List<WebMenuModel> fullMenu)
+        {
+            //_menuString = "[";
+
+            foreach (var menu in fullMenu)
+            {
+                if (menu.ParentId == 0)
+                {
+                    NewAngularSubMenu(fullMenu, menu);
+                }
+            }
+
+            //_menuString = _menuString + "];";
+        }
+
+
+        public void NewAngularSubMenu(List<WebMenuModel> fullMenu, WebMenuModel menu)
+        {
+            //_menuString = _menuString + "{ displayName: '" + menu.DisplayName + "'";
+            //navMenu.Add(new NavItem { displayName = menu.DisplayName });
+
+            var subMenus = fullMenu.Where(p => p.ParentId == menu.ItemId);
+
+            if (subMenus.Count() > 0)
+            {
+                //_menuString = _menuString + ", children: [";
+
+                foreach (WebMenuModel p in subMenus)
+                {
+                    if (fullMenu.Count(x => x.ParentId == p.ItemId) > 0)
+                    {
+                        AngularSubMenu(fullMenu, p);
+                    }
+                    else
+                    {
+                        //_menuString = _menuString + "{ displayName: '" + p.DisplayName + "'}";
+                        //navMenu.Append<NavItem>(new NavItem { displayName = menu.DisplayName });
+                    }
+                }
+                //_menuString = _menuString + " ]";
+            }
+            //_menuString = _menuString + "}, ";
+        }
+
+
+
+        //[Route("api/getangularmenu")]
+        public void BuildAngularMenu(List<WebMenuModel> fullMenu)
+        {
+            //_menuString = "[";
+
+            foreach (var menu in fullMenu)
+            {
+                if (menu.ParentId == 0)
+                {
+                    AngularSubMenu(fullMenu, menu);
+                }
+            }
+
+            //_menuString = _menuString + "];";
+        }
+
+        
+        public void AngularSubMenu(List<WebMenuModel> fullMenu, WebMenuModel menu)
+        {
+            _menuString = _menuString + "{ displayName: '" + menu.DisplayName + "'";
+
+            var subMenus = fullMenu.Where(p => p.ParentId == menu.ItemId);
+
+            if (subMenus.Count() > 0)
+            {
+                _menuString = _menuString + ", children: [";
+
+                foreach (WebMenuModel p in subMenus)
+                {
+                    if (fullMenu.Count(x => x.ParentId == p.ItemId) > 0)
+                    { 
+                        AngularSubMenu(fullMenu, p);
+                    }
+                    else
+                    {
+                        _menuString = _menuString + "{ displayName: '" + p.DisplayName + "'}";
+                    }
+                }
+                _menuString = _menuString + " ]";
+            }
+            _menuString = _menuString + "}, ";
+        }
+
 
         public void BuildMenu(List<WebMenuModel> fullMenu)
         {

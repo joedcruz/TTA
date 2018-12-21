@@ -8,6 +8,8 @@ namespace TTAServer
 
         public DbSet<SettingsDataModel> Settings { get; set; }
         public DbSet<WebMenuModel> tblWebMenu { get; set; }
+        public DbSet<Todo> Todo { get; set; }
+        public DbSet<CustomerTB> CustomerTB { get; set; }
 
         #endregion
 
